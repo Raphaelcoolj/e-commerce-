@@ -5,6 +5,18 @@ from .serializers import ProductSerializer, CartItemSerializer, OrderSerializer,
 from rest_framework.permissions import IsAdminUser, AllowAny
 from django.db.models import F, Sum
 
+
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+
+def create_admin(request):
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser("admin", "admin@example.com", "yourpassword")
+        return HttpResponse("Superuser created")
+    return HttpResponse("Superuser exists")
+
+
+
 class CreateUserView(generics.CreateAPIView):
     serializer_class = CreateUserSerializer
     permission_classes = [AllowAny]
