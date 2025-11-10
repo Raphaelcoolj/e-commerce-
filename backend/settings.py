@@ -80,15 +80,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # -------------------------------
 # Database (PostgreSQL)
 # -------------------------------
+import dj_database_url
+
+# Make sure to set this in Render's environment variables as DATABASE_URL
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'ecommerce_db',      # replace with your actual DB name
-        'USER': 'postgres',
-        'PASSWORD': 'test',
-        'HOST': '105.112.216.49',
-        'PORT': '5432',
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True  # Render PostgreSQL requires SSL
+    )
 }
 
 
