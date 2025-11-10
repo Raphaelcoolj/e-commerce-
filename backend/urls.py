@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import create_admin
-from products.views import CreateUserView
+from products.views import CreateUserView, create_admin
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
