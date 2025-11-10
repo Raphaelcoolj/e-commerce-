@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from products.views import CreateUserView, create_admin_user
+from products.views import CreateUserView, create_admin_user, run_migrations
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
@@ -10,5 +10,6 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
     path('api-auth/', include('rest_framework.urls')),
     path("create-admin/", create_admin_user),
-    path('api/', include('products.urls'))
+    path('api/', include('products.urls')),
+    path("run-migrations/", run_migrations)
 ]
