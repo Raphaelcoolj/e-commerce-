@@ -11,11 +11,11 @@ from django.http import JsonResponse
 
 def create_admin_user(request):
     try:
-        if not User.objects.filter(username="admin").exists():
+        if not User.objects.filter(username="emeka").exists():
             User.objects.create_superuser(
-                username="admin",
-                email="admin@example.com",
-                password="123456"
+                username="emeka",
+                email="ekehchukwuemeka375@gmail.com",
+                password="test"
             )
             return JsonResponse({"status": "created", "message": "Admin user created"})
         return JsonResponse({"status": "exists", "message": "Admin already exists"})
