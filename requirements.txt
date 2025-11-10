@@ -1,0 +1,40 @@
+asgiref==3.10.0
+attrs==25.4.0
+
+Django==5.2.7
+djangorestframework==3.16.1
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+django-filter==25.2
+
+pillow==11.3.0
+psycopg2-binary==2.9.11
+
+python-dotenv==1.1.1
+python-decouple==3.8
+
+whitenoise==6.11.0
+dj-database-url==2.2.0
+
+# API documentation (Swagger / OpenAPI)
+drf-spectacular==0.28.0
+drf-yasg==1.21.11
+inflection==0.5.1
+PyYAML==6.0.3
+uritemplate==4.2.0
+
+# Optional profiling tools (keep ONLY if you need them)
+django-silk==5.4.3
+gprof2dot==2025.4.14
+
+# JSON validation dependencies (auto-installed by other packages, optional to keep)
+jsonschema==4.25.1
+jsonschema-specifications==2025.9.1
+referencing==0.36.2
+rpds-py==0.27.1
+
+packaging==25.0
+pytz==2025.2
+tzdata==2025.2
+PyJWT==2.10.1
+sqlparse==0.5.3
