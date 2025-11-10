@@ -22,6 +22,14 @@ def create_admin_user(request):
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)})
 
+from django.core.management import call_command
+
+def run_migrations(request):
+    try:
+        call_command("migrate")
+        return JsonResponse({"status": "ok", "message": "Migrations applied"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
 
 
 
