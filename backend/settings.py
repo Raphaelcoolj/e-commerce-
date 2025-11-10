@@ -83,13 +83,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT', default='5432'),
+        'NAME':'ecommerce_db',      # replace with your actual DB name
+        'USER': 'postgres',
+        'PASSWORD': 'test',
+        'HOST': '105.112.216.49',
+        'PORT': '5432',
     }
 }
+
 
 # -------------------------------
 # Password Validators
