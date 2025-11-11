@@ -6,30 +6,30 @@ from rest_framework.permissions import IsAdminUser, AllowAny
 from django.db.models import F, Sum
 
 
-from django.contrib.auth.models import User
-from django.http import JsonResponse
+#from django.contrib.auth.models import User
+#from django.http import JsonResponse
 
-def create_admin_user(request):
-    try:
-        if not User.objects.filter(username="emeka").exists():
-            User.objects.create_superuser(
-                username="emeka",
-                email="ekehchukwuemeka375@gmail.com",
-                password="test"
-            )
-            return JsonResponse({"status": "created", "message": "Admin user created"})
-        return JsonResponse({"status": "exists", "message": "Admin already exists"})
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)})
+#def create_admin_user(request):
+ #   try:
+  #      if not User.objects.filter(username="emeka").exists():
+   #         User.objects.create_superuser(
+    #            username="emeka",
+     #           email="ekehchukwuemeka375@gmail.com",
+      #          password="test"
+       #     )
+        #    return JsonResponse({"status": "created", "message": "Admin user created"})
+       # return JsonResponse({"status": "exists", "message": "Admin already exists"})
+    #except Exception as e:
+     #   return JsonResponse({"status": "error", "message": str(e)})
 
-from django.core.management import call_command
+#from django.core.management import call_command
 
-def run_migrations(request):
-    try:
-        call_command("migrate")
-        return JsonResponse({"status": "ok", "message": "Migrations applied"})
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)})
+#def run_migrations(request):
+#    try:
+#        call_command("migrate")
+#        return JsonResponse({"status": "ok", "message": "Migrations applied"})
+ #   except Exception as e:
+  #      return JsonResponse({"status": "error", "message": str(e)})
 
 
 
