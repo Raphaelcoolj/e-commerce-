@@ -48,7 +48,8 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Order #{self.id} - {self.user.username}"
+        return f"Order #{self.id} - {getattr(self.user, 'username', 'Unknown')}"
+
 
     def calculate_total(self):
         total = self.items.aggregate(total=Sum(F('quantity') * F('product__price')))['total']
