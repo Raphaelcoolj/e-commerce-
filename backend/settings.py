@@ -136,6 +136,10 @@ REST_FRAMEWORK = {
 # CORS
 # -------------------------------
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ['https://e-commerce-o7m0.onrender.com']
+CORS_ALLOWED_ORIGINS = ['https://e-commerce-o7m0.onrender.com']
+CORS_ALLOW_CREDENTIALS = True
+
 
 # -------------------------------
 # Default primary key field
