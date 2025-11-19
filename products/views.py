@@ -4,6 +4,7 @@ from .models import Product, CartItem, Order, OrderItem
 from .serializers import ProductSerializer, CartItemSerializer, OrderSerializer, CreateUserSerializer
 from rest_framework.permissions import IsAdminUser, AllowAny
 from django.db.models import F, Sum
+from rest_framework import filters
 
 
 #from django.contrib.auth.models import User
@@ -41,10 +42,14 @@ class CreateUserView(generics.CreateAPIView):
 # -------------------------------
 # Authenticated user views
 # -------------------------------
+
 class ProductListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.searchFilter, filters.orderingFilter]
+    search_fields = ['name', 'description', 'price']
+    order_fields = ['price', 'name']
 
 class AddToCartView(generics.CreateAPIView):
     serializer_class = CartItemSerializer
