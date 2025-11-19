@@ -16,6 +16,9 @@ python-decouple==3.8
 whitenoise==6.11.0
 dj-database-url==2.2.0
 
+django_storages
+boto3
+
 # API documentation (Swagger / OpenAPI)
 drf-spectacular==0.28.0
 drf-yasg==1.21.11
