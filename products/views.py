@@ -95,7 +95,8 @@ class PlaceOrderView(generics.CreateAPIView):
         for item in cart_items:
             order_items_to_create.append(
                 OrderItem(order=order, product=item.product, quantity=item.quantity)
-            )     OrderItem.objects.bulk_create(order_items_to_create)
+            )    
+ OrderItem.objects.bulk_create(order_items_to_create)
 
        
         order.calculate_total() # This must happen after OrderItems are created
