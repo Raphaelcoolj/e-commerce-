@@ -47,9 +47,9 @@ class ProductListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
-    filter_backends = [filters.searchFilter, filters.orderingFilter]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description', 'price']
-    order_fields = ['price', 'name']
+    ordering_fields = ['price', 'name']
 
 class AddToCartView(generics.CreateAPIView):
     serializer_class = CartItemSerializer
