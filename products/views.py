@@ -6,34 +6,9 @@ from rest_framework.permissions import IsAdminUser, AllowAny
 from django.db.models import F, Sum
 from rest_framework import filters
 from .filters import ProductFilter
+from django.db import transaction # Ensure this is imported for @transaction.atomic
 
-
-#from django.contrib.auth.models import User
-#from django.http import JsonResponse
-
-#def create_admin_user(request):
- #   try:
-  #      if not User.objects.filter(username="emeka").exists():
-   #         User.objects.create_superuser(
-    #            username="emeka",
-     #           email="ekehchukwuemeka375@gmail.com",
-      #          password="test"
-       #     )
-        #    return JsonResponse({"status": "created", "message": "Admin user created"})
-       # return JsonResponse({"status": "exists", "message": "Admin already exists"})
-    #except Exception as e:
-     #   return JsonResponse({"status": "error", "message": str(e)})
-
-#from django.core.management import call_command
-
-#def run_migrations(request):
-#    try:
-#        call_command("migrate")
-#        return JsonResponse({"status": "ok", "message": "Migrations applied"})
- #   except Exception as e:
-  #      return JsonResponse({"status": "error", "message": str(e)})
-
-
+# ... (Commented-out code blocks removed for clarity)
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = CreateUserSerializer
@@ -47,7 +22,8 @@ class CreateUserView(generics.CreateAPIView):
 class ProductListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # CORRECTION: Changed to AllowAny for public browsing
+    permission_classes = [AllowAny] 
     filterset_class = ProductFilter
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description', 'price']
@@ -67,8 +43,6 @@ class CartListView(generics.ListAPIView):
     def get_queryset(self):
         return CartItem.objects.filter(user=self.request.user)
 
-from django.db import transaction, models
-
 class PlaceOrderView(generics.CreateAPIView):
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -76,11 +50,14 @@ class PlaceOrderView(generics.CreateAPIView):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         user = request.user
-        cart_items = CartItem.objects.select_related('product').filter(user=user)
-        
+        # Optimization: select_for_update locks the cart items and their related products 
+        # to prevent a race condition where two users buy the last item simultaneously.
+        cart_items = CartItem.objects.select_related('product').filter(user=user).select_for_update() 
+
         if not cart_items.exists():
             return Response({"detail": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+        # 1. Inventory Check (Correctly implemented by you)
         for item in cart_items:
             if item.quantity > item.product.stock:
                 return Response(
@@ -88,23 +65,41 @@ class PlaceOrderView(generics.CreateAPIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-        
-        order = Order.objects.create(user=user, status='processing') # Set initial status
-        
+        order = Order.objects.create(user=user, status='processing') 
+
         order_items_to_create = []
+        product_updates = []
+
         for item in cart_items:
             order_items_to_create.append(
                 OrderItem(order=order, product=item.product, quantity=item.quantity)
-            )    
- OrderItem.objects.bulk_create(order_items_to_create)
+            )
+            
+            # 2. CRITICAL FIX: Prepare atomic stock reduction (F expression)
+            # This ensures the stock is decremented at the database level.
+            product_updates.append(
+                Product.objects.filter(pk=item.product.pk).update(stock=F('stock') - item.quantity)
+            )
 
-       
-        order.calculate_total() # This must happen after OrderItems are created
-        cart_items.delete() # Clears the user's cart
+        # 3. FIX: Correctly indented bulk_create call
+        OrderItem.objects.bulk_create(order_items_to_create) 
         
+        # Note: The `product_updates` list contains the results of the updates, 
+        # but the atomic F() updates have already executed successfully within the transaction.
+
+        order.calculate_total()
+        cart_items.delete()
+
         serializer = self.get_serializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+class UserOrderListView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)
 
 # -------------------------------
 # Admin views
