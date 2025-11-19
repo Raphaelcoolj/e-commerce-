@@ -18,7 +18,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -------------------------------
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-local-key')
 DEBUG = config('DEBUG', default=True, cast=bool)
-# Use your specific Render domain when DEBUG is False for security
 ALLOWED_HOSTS = ['*'] 
 
 # -------------------------------
@@ -40,7 +39,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_spectacular',
     
-    # Cloudinary for file storage (FREE, NO CREDIT CARD)
+    # Cloudinary for file storage
     'cloudinary_storage', 
     'cloudinary',
     
@@ -53,7 +52,6 @@ INSTALLED_APPS = [
 # -------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # MUST come before other middleware that might consume the request body
     'corsheaders.middleware.CorsMiddleware',       
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -95,7 +93,7 @@ DATABASES = {
     "default": dj_database_url.config(
         default=os.environ.get("DATABASE_URL"),
         conn_max_age=600,
-        ssl_require=True  # Render PostgreSQL requires SSL
+        ssl_require=True
     )
 }
 
@@ -138,30 +136,24 @@ if DEBUG:
 else:
     # Production Settings (Uses Cloudinary for persistent storage)
     
-    # 1. Cloudinary Credentials (Must be set as ENV vars on Render)
-    CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME')
-    CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY')
-    CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET')
-
+    # 1. CRITICAL FIX: Read the single CLOUDINARY_URL variable
+    CLOUDINARY_URL = config('CLOUDINARY_URL')
+    
     # 2. Configure Django to use Cloudinary for all media files
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     
     # 3. Set the base URL for media
     MEDIA_URL = '/media/'
     
-    # Optional: Configure the folder inside Cloudinary (good practice)
+    # 4. Optional: Configure the folder inside Cloudinary
     CLOUDINARY_STORAGE = {
         'MEDIA_FOLDER': 'e_commerce_media',
         'STATIC_FOLDER': 'e_commerce_static',
-        # You can add other options here if needed, like transformations
     }
     
-    # Initialize the cloudinary library using the credentials
+    # 5. Initialize the cloudinary library (it automatically parses CLOUDINARY_URL)
     cloudinary.config( 
-        cloud_name = CLOUDINARY_CLOUD_NAME, 
-        api_key = CLOUDINARY_API_KEY, 
-        api_secret = CLOUDINARY_API_SECRET,
-        secure=True
+        secure=True # Ensures media URLs are served over HTTPS
     )
 
 
@@ -179,9 +171,7 @@ REST_FRAMEWORK = {
 # -------------------------------
 # CORS
 # -------------------------------
-# Safer configuration based on DEBUG status
 CORS_ALLOW_ALL_ORIGINS = DEBUG 
-# Only allow specific domains in production
 CORS_ALLOWED_ORIGINS = ['https://e-commerce-o7m0.onrender.com']
 CSRF_TRUSTED_ORIGINS = ['https://e-commerce-o7m0.onrender.com']
 CORS_ALLOW_CREDENTIALS = True
@@ -214,4 +204,3 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False, 
 }
-
