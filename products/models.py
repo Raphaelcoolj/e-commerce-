@@ -1,7 +1,7 @@
-from django.db import models
-from django.contrib.auth.models import User
+#from django.db import models
+#from django.contrib.auth.models import User
 # CRITICAL IMPORT: Needed for robust aggregation logic (Case/When)
-from django.db.models import Sum, F, Case, When, DecimalField 
+#from django.db.models import Sum, F, Case, When, DecimalField 
 
 # -------------------------------
 # Product (TEMPORARILY COMMENTED OUT FOR DATABASE CLEANUP)
