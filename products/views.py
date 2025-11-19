@@ -2,7 +2,7 @@ from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 # Models were commented out in models.py, so we MUST comment out the import here too.
 # from .models import Product, CartItem, Order, OrderItem 
-from .serializers import ProductSerializer, CartItemSerializer, OrderSerializer, CreateUserSerializer
+from .serializers import CreateUserSerializer, #ProductSerializer, OrderSerializer,CartItemSerializer
 from rest_framework.permissions import IsAdminUser, AllowAny
 from django.db.models import F, Sum
 from rest_framework import filters
