@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 from decouple import config
 from datetime import timedelta
+import dj_database_url
 
 
 # -------------------------------
@@ -81,7 +82,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # -------------------------------
 # Database (PostgreSQL)
 # -------------------------------
-import dj_database_url
 
 # Make sure to set this in Render's environment variables as DATABASE_URL
 DATABASES = {
