@@ -5,6 +5,7 @@ from .serializers import ProductSerializer, CartItemSerializer, OrderSerializer,
 from rest_framework.permissions import IsAdminUser, AllowAny
 from django.db.models import F, Sum
 from rest_framework import filters
+from .filters import ProductFilter
 
 
 #from django.contrib.auth.models import User
@@ -47,6 +48,7 @@ class ProductListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_class = ProductFilter
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description', 'price']
     ordering_fields = ['price', 'name']
