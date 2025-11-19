@@ -67,32 +67,43 @@ class CartListView(generics.ListAPIView):
     def get_queryset(self):
         return CartItem.objects.filter(user=self.request.user)
 
+from django.db import transaction, models
+
 class PlaceOrderView(generics.CreateAPIView):
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         user = request.user
-        cart_items = CartItem.objects.filter(user=user)
+        cart_items = CartItem.objects.select_related('product').filter(user=user)
+        
         if not cart_items.exists():
             return Response({"detail": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST)
-
-        order = Order.objects.create(user=user)
+        
         for item in cart_items:
-            OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
-        order.calculate_total()
+            if item.quantity > item.product.stock:
+                return Response(
+                    {"detail": f"Not enough stock for {item.product.name}. Available: {item.product.stock}"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
-        cart_items.delete()
+        
+        order = Order.objects.create(user=user, status='processing') # Set initial status
+        
+        order_items_to_create = []
+        for item in cart_items:
+            order_items_to_create.append(
+                OrderItem(order=order, product=item.product, quantity=item.quantity)
+            )     OrderItem.objects.bulk_create(order_items_to_create)
 
+       
+        order.calculate_total() # This must happen after OrderItems are created
+        cart_items.delete() # Clears the user's cart
+        
         serializer = self.get_serializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class UserOrderListView(generics.ListAPIView):
-    serializer_class = OrderSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
 
 # -------------------------------
 # Admin views
