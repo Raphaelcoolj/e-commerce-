@@ -1,50 +1,51 @@
 from rest_framework import serializers
-from .models import Product, CartItem, Order, OrderItem
+# Models were commented out in models.py, so we MUST comment out the import here too.
+# from .models import Product, CartItem, Order, OrderItem
 from django.contrib.auth.models import User
 
 # -------------------------------
-# Product Serializer
+# Product Serializer (TEMPORARILY COMMENTED OUT)
 # -------------------------------
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = '__all__'
+# class ProductSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         # model = Product
+#         fields = '__all__'
 
 # -------------------------------
-# CartItem Serializer
+# CartItem Serializer (TEMPORARILY COMMENTED OUT)
 # -------------------------------
-class CartItemSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True)
-    product_id = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), write_only=True, source='product')
+# class CartItemSerializer(serializers.ModelSerializer):
+#     # product = ProductSerializer(read_only=True)
+#     # product_id = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), write_only=True, source='product')
 
-    class Meta:
-        model = CartItem
-        fields = ['id', 'product', 'product_id', 'quantity', 'added_at']
-
-# -------------------------------
-# OrderItem Serializer
-# -------------------------------
-class OrderItemSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True)
-
-    class Meta:
-        model = OrderItem
-        fields = ['product', 'quantity']
+#     class Meta:
+#         # model = CartItem
+#         fields = ['id', 'product', 'product_id', 'quantity', 'added_at']
 
 # -------------------------------
-# Order Serializer
+# OrderItem Serializer (TEMPORARILY COMMENTED OUT)
 # -------------------------------
-class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(source='items', many=True, read_only=True)
-    user = serializers.StringRelatedField(read_only=True)
+# class OrderItemSerializer(serializers.ModelSerializer):
+#     # product = ProductSerializer(read_only=True)
 
-    class Meta:
-        model = Order
-        fields = ['id', 'user', 'total_price', 'status', 'items', 'created_at']
-
+#     class Meta:
+#         # model = OrderItem
+#         fields = ['product', 'quantity']
 
 # -------------------------------
-# Serializer for creating users
+# Order Serializer (TEMPORARILY COMMENTED OUT)
+# -------------------------------
+# class OrderSerializer(serializers.ModelSerializer):
+#     # items = OrderItemSerializer(source='items', many=True, read_only=True)
+#     user = serializers.StringRelatedField(read_only=True)
+
+#     class Meta:
+#         # model = Order
+#         fields = ['id', 'user', 'total_price', 'status', 'items', 'created_at']
+
+
+# -------------------------------
+# Serializer for creating users (KEPT ACTIVE)
 # -------------------------------
 class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
